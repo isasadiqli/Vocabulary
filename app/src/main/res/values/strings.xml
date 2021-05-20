@@ -23,4 +23,7 @@
     <string name="profile">Profile</string>
     <string name="account">Account</string>
     <string name="search_word">Search word</string>
+    <string name="addedList">Added list</string>
+    <string name="notMemorized">Not memorized</string>
+    <string name="notOnTheList">Not on the list</string>
 </resources>

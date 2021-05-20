@@ -9,17 +9,17 @@ import java.util.HashMap;
 
 public class User {
     private String name, surname, email, password;
-    private HashMap<String, String> verbs;
-    private HashMap<String, String> adverbs;
-    private HashMap<String, String> adjectives;
-    private HashMap<String, String> phrases;
-    private HashMap<String, String> userOwnList;
+    private HashMap<String, WordStatus> verbs;
+    private HashMap<String, WordStatus> adverbs;
+    private HashMap<String, WordStatus> adjectives;
+    private HashMap<String, WordStatus> phrases;
+    private HashMap<String, WordStatus> userOwnList;
 
 
     public User(String name, String surname, String email, String password,
-                HashMap<String, String> verbs, HashMap<String, String> adverbs,
-                HashMap<String, String> adjectives, HashMap<String, String> phrases,
-                HashMap<String, String> userOwnList) {
+                HashMap<String, WordStatus> verbs, HashMap<String, WordStatus> adverbs,
+                HashMap<String, WordStatus> adjectives, HashMap<String, WordStatus> phrases,
+                HashMap<String, WordStatus> userOwnList) {
         this.name = name;
         this.surname = surname;
         this.email = email;
@@ -30,7 +30,6 @@ public class User {
         this.phrases = phrases;
         this.userOwnList = userOwnList;
     }
-
 
     public String getName() {
         return name;
@@ -64,43 +63,43 @@ public class User {
         this.password = password;
     }
 
-    public HashMap<String, String> getVerbs() {
+    public HashMap<String, WordStatus> getVerbs() {
         return verbs;
     }
 
-    public void setVerbs(HashMap<String, String> verbs) {
+    public void setVerbs(HashMap<String, WordStatus> verbs) {
         this.verbs = verbs;
     }
 
-    public HashMap<String, String> getAdverbs() {
+    public HashMap<String, WordStatus> getAdverbs() {
         return adverbs;
     }
 
-    public void setAdverbs(HashMap<String, String> adverbs) {
+    public void setAdverbs(HashMap<String, WordStatus> adverbs) {
         this.adverbs = adverbs;
     }
 
-    public HashMap<String, String> getAdjectives() {
+    public HashMap<String, WordStatus> getAdjectives() {
         return adjectives;
     }
 
-    public void setAdjectives(HashMap<String, String> adjectives) {
+    public void setAdjectives(HashMap<String, WordStatus> adjectives) {
         this.adjectives = adjectives;
     }
 
-    public HashMap<String, String> getPhrases() {
+    public HashMap<String, WordStatus> getPhrases() {
         return phrases;
     }
 
-    public void setPhrases(HashMap<String, String> phrases) {
+    public void setPhrases(HashMap<String, WordStatus> phrases) {
         this.phrases = phrases;
     }
 
-    public HashMap<String, String> getUserOwnList() {
+    public HashMap<String, WordStatus> getUserOwnList() {
         return userOwnList;
     }
 
-    public void setUserOwnList(HashMap<String, String> userOwnList) {
+    public void setUserOwnList(HashMap<String, WordStatus> userOwnList) {
         this.userOwnList = userOwnList;
     }
 

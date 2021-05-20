@@ -40,7 +40,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private Adapter adapter;
     private ArrayList<Word> words = new ArrayList<>();
-    private HashMap<String, String> wordStatus = new HashMap<>();
+    private HashMap<String, Boolean> wordStatus = new HashMap<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);

@@ -22,17 +22,16 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     Context context;
     ArrayList<Word> words;
-    HashMap<String, String> wordStatus;
+    HashMap<String, Boolean> wordStatus;
     int mExpandedPosition = -1;
     int previousExpandedPosition = -1;
-    private int memorized = 0;
 
     WordStatusHandler wordStatusHandlerSet;
 
     ArrayList<String> categories;
     String recycleViewType;
 
-    public Adapter(Context context, ArrayList<Word> words, HashMap<String, String> wordStatus, ArrayList<String> categories, String recycleViewType) {
+    public Adapter(Context context, ArrayList<Word> words, HashMap<String, Boolean> wordStatus, ArrayList<String> categories, String recycleViewType) {
         this.context = context;
         this.recycleViewType = recycleViewType;
 
@@ -68,6 +67,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             holder.definitionLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
             holder.exampleLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
             holder.memorized.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+            holder.addToList.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
 
             holder.itemView.setActivated(isExpanded);
 
@@ -77,7 +77,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                 wordStatusHandlerSet = new WordStatusHandler(Tools.getCategory().toLowerCase(),
                         WordList.getWords().get(position).getWord());
 
-                Tools.getWordStatus(wordStatus, wordStatusHandlerSet, holder.memorized);
+                Tools.getWordStatus(wordStatus, wordStatusHandlerSet, holder.memorized, true);
+                Tools.getWordStatus(wordStatus, wordStatusHandlerSet, holder.addToList, false);
+
                 Tools.setWordPosition(position);
             }
 
@@ -93,32 +95,58 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
             holder.memorized.setOnClickListener(v -> {
                 Tools.setWordPosition(position);
-                memorized++;
-                Drawable backgroundColor = holder.memorized.getBackground();
-                //Tools.updateUserWordList();
 
                 WordStatusHandler wordStatusHandler;
+                WordStatus wordStatus;
 
-                if (memorized % 2 != 0) {
+                if (holder.memorized.getText().equals("Not memorized")) {
 
                     wordStatusHandler = new WordStatusHandler(Tools.getCategory().toLowerCase(),
-                            WordList.getWords().get(position).getWord(), "Memorized");
+                            WordList.getWords().get(position).getWord());
 
-
-                    holder.memorized.setBackgroundColor(Color.parseColor("#74E96F"));
-                    holder.memorized.setText(R.string.remindMeLater);
+                    wordStatus = new WordStatus();
+                    wordStatus.setMemorized(true);
+                    wordStatusHandler.setStatus(wordStatus);
 
                 } else {
 
                     wordStatusHandler = new WordStatusHandler(Tools.getCategory().toLowerCase(),
-                            WordList.getWords().get(position).getWord(), "Remind me later");
+                            WordList.getWords().get(position).getWord());
 
-                    holder.memorized.setBackgroundColor(Color.BLUE);
-                    holder.memorized.setText(R.string.memorized);
+                    wordStatus = new WordStatus();
+                    wordStatus.setMemorized(false);
+                    wordStatusHandler.setStatus(wordStatus);
                 }
-                Tools.updateWordStatus(wordStatusHandler);
+                Tools.updateWordStatus(wordStatusHandler, true);
 
 
+            });
+
+            holder.addToList.setOnClickListener(v -> {
+                Tools.setWordPosition(position);
+
+                WordStatusHandler wordStatusHandler;
+                WordStatus wordStatus;
+
+                if (holder.addToList.getText().equals("Not on the list")) {
+
+                    wordStatusHandler = new WordStatusHandler(Tools.getCategory().toLowerCase(),
+                            WordList.getWords().get(position).getWord());
+
+                    wordStatus = new WordStatus();
+                    wordStatus.setAddedToList(true);
+                    wordStatusHandler.setStatus(wordStatus);
+
+                } else {
+
+                    wordStatusHandler = new WordStatusHandler(Tools.getCategory().toLowerCase(),
+                            WordList.getWords().get(position).getWord());
+
+                    wordStatus = new WordStatus();
+                    wordStatus.setAddedToList(false);
+                    wordStatusHandler.setStatus(wordStatus);
+                }
+                Tools.updateWordStatus(wordStatusHandler, false);
             });
         }
         else {
@@ -148,7 +176,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
         TextView word, definition, example;
         LinearLayout definitionLayout, exampleLayout;
-        Button memorized;
+        Button memorized, addToList;
         RecyclerView recyclerView;
 
         TextView categoryTitle;
@@ -165,9 +193,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             definitionLayout = itemView.findViewById(R.id.definitionLayout);
             exampleLayout = itemView.findViewById(R.id.exampleLayout);
             memorized = itemView.findViewById(R.id.Learned);
+            addToList = itemView.findViewById(R.id.addToList);
 
             recyclerView = itemView.findViewById(R.id.wordList);
-
 
             categoryTitle = itemView.findViewById(R.id.categoryTitle);
         }

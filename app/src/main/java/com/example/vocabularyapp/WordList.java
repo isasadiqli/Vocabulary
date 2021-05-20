@@ -24,7 +24,7 @@ public class WordList extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private Adapter adapter;
     private static ArrayList<Word> words;
-    private HashMap<String, String> wordStatus = new HashMap<>();
+    private HashMap<String, Boolean > wordStatus = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +48,7 @@ public class WordList extends AppCompatActivity {
     }
 
     private void readWords() {
-        WordStatusHandler wordStatusHandler = new WordStatusHandler("", "", "");
+        WordStatusHandler wordStatusHandler = new WordStatusHandler("", "");
         wordStatusHandler.setCategory(Tools.getCategory());
 
         recyclerView.setAdapter(adapter);

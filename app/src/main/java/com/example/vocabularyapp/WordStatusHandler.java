@@ -1,9 +1,10 @@
 package com.example.vocabularyapp;
 
 public class WordStatusHandler {
-    private String category, word, status;
+    private String category, word;
+    private WordStatus status;
 
-    public WordStatusHandler(String category, String word, String status) {
+    public WordStatusHandler(String category, String word, WordStatus status) {
         this.category = category;
         this.word = word;
         this.status = status;
@@ -30,11 +31,11 @@ public class WordStatusHandler {
         this.word = word;
     }
 
-    public String getStatus() {
+    public WordStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(WordStatus status) {
         this.status = status;
     }
 

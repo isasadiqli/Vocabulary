@@ -82,34 +82,38 @@
                 android:id="@+id/example"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="example"
+                android:text="example                       "
                 android:textColor="@color/black"
                 android:textSize="26sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="2.0" >
 
             <Button
                 android:id="@+id/Learned"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:onClick="learnedClicked"
-                android:text="@string/memorized" />
+                android:layout_weight="1"
+                android:text="@string/notMemorized" />
+
+            <View
+                android:layout_width="3dp"
+                android:layout_height="match_parent" />
 
             <Button
-                android:id="@+id/button"
-                android:layout_width="wrap_content"
+                android:id="@+id/addToList"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="25dp"
+                android:layout_marginEnd="15dp"
                 android:layout_weight="1"
-                android:text="    Button   " />
+                android:text="@string/notOnTheList" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>
