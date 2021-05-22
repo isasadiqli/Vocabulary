@@ -1,19 +1,27 @@
 package com.example.vocabularyapp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.TypedValue;
+import android.view.MenuItem;
 import android.view.View;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,12 +32,22 @@ public class WordList extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private Adapter adapter;
     private static ArrayList<Word> words;
-    private HashMap<String, Boolean > wordStatus = new HashMap<>();
+    private HashMap<String, Boolean> wordStatus = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_list);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle(Tools.getCategory(true));
+
+        TypedValue typedValue = new TypedValue();
+        this.getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        final int color = typedValue.data;
+
+        actionBar.setBackgroundDrawable(new ColorDrawable(color));
 
         recyclerView = findViewById(R.id.wordList);
         recyclerView.setHasFixedSize(true);
@@ -37,14 +55,10 @@ public class WordList extends AppCompatActivity {
 
         words = new ArrayList<>();
         ArrayList<String> cat = new ArrayList<>();
-        adapter = new Adapter(this, words, wordStatus, cat, "words");
-
+        ArrayList<Integer> catI = new ArrayList<>();
+        adapter = new Adapter(this, words, wordStatus, cat, catI, "words");
 
         readWords();
-
-        //Tools.readWords(recyclerView, adapter);
-
-
     }
 
     private void readWords() {
@@ -52,15 +66,59 @@ public class WordList extends AppCompatActivity {
         wordStatusHandler.setCategory(Tools.getCategory());
 
         recyclerView.setAdapter(adapter);
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Words").child(wordStatusHandler.getCategory());
-        databaseReference.addValueEventListener(new ValueEventListener() {
+
+        if (Tools.getCategory().equals("userWordList")) {
+            ArrayList<String> userWords = new ArrayList<>();
+
+            DatabaseReference userID = FirebaseDatabase.getInstance().getReference("Users")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+            DatabaseReference mRef = userID.child("userwordlist");
+            mRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+
+                    for (DataSnapshot ds :
+                            snapshot.getChildren()) {
+                        userWords.add(ds.getKey());
+                    }
+
+                    searchWords(userWords, "Verbs");
+                    searchWords(userWords, "Adverbs");
+                    searchWords(userWords, "Adjectives");
+                    searchWords(userWords, "Phrases");
+
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                }
+            });
+
+
+        } else {
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Words").child(wordStatusHandler.getCategory());
+            System.out.println("menim 102 " + wordStatusHandler.getCategory());
+            databaseReference.addValueEventListener(getListener());
+        }
+
+    }
+
+    @NotNull
+    private ValueEventListener getListener() {
+        return new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
                 for (DataSnapshot snapshot :
                         dataSnapshot.getChildren()) {
                     Word word = snapshot.getValue(Word.class);
-                    System.out.println("menim" + word);
-                    words.add(word);
+
+                    if (search(word.getWord()))
+                        words.add(word);
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -69,10 +127,38 @@ public class WordList extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        };
+    }
+
+    private void searchWords(ArrayList<String> userWords, String category) {
+        for (String w :
+                userWords) {
+            Query query = FirebaseDatabase.getInstance().
+                    getReference("Words").child(category).orderByChild("word").equalTo(w);
+
+            query.addValueEventListener(getListener());
+        }
     }
 
     public static ArrayList<Word> getWords() {
         return words;
+    }
+
+    private static boolean search(String word) {
+        for (Word w :
+                words) {
+            if (word.equals(w.getWord()))
+                return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            this.finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

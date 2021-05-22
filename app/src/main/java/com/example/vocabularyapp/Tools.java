@@ -15,6 +15,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.database.DataSnapshot;
@@ -82,7 +84,23 @@ public class Tools {
             case 3:
                 return "Phrases";
             case 4:
-                return "UserOwnList";
+                return "userWordList";
+        }
+        return "";
+    }
+
+    public static String getCategory(boolean isForTitle) {
+        switch (categoryPosition) {
+            case 0:
+                return "Verbs";
+            case 1:
+                return "Adverbs";
+            case 2:
+                return "Adjectives";
+            case 3:
+                return "Phrases and Idioms";
+            case 4:
+                return "Your list";
         }
         return "";
     }
@@ -282,7 +300,6 @@ public class Tools {
 
     public void readUserInfo(String location) {
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        System.out.println("MENIM " + userID);
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users");
         databaseReference.addValueEventListener(new ValueEventListener() {
@@ -307,7 +324,6 @@ public class Tools {
                 readWordsToHashmap(snapshot, userOwnListStatus, userID, "userOwnList");
 
                 user = new User(name, surname, email, password, verbStatus, adverbStatus, adjectiveStatus, phrasesStatus, userOwnListStatus);
-//                System.out.println("MENIM" + user.toString());
 
                 if (location.equals("dashboard")) {
                     String userNameSurname = name + " " + surname;
@@ -344,8 +360,10 @@ public class Tools {
     public static void updateWordStatus(WordStatusHandler wordStatusHandler, boolean flag) {
         DatabaseReference userID = FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        String key = "";
-        boolean isMem = true;
+
+        String key;
+        boolean isMem;
+
         if (flag) {
             key = "memorized";
             isMem = wordStatusHandler.getStatus().isMemorized();
@@ -354,9 +372,11 @@ public class Tools {
             key = "addedToList";
             isMem = wordStatusHandler.getStatus().isAddedToList();
         }
+
         userID.child(wordStatusHandler.getCategory()).child(wordStatusHandler.getWord())
                 .child(key)
                 .setValue(isMem).addOnCompleteListener(task -> {
+
             if (task.isSuccessful()) {
                 System.out.println("menim Succes");
             } else System.out.println("menim unsucces");
@@ -364,37 +384,53 @@ public class Tools {
 
     }
 
-    public static void getWordStatus(HashMap<String, Boolean> wordStatus, WordStatusHandler wordStatusHandler, Button button, boolean flag) {
+    public static void getWordStatus(HashMap<String, Boolean> wordStatus, WordStatusHandler wordStatusHandler, Button button, boolean isItForMemorized, boolean flagForUserList) {
+
+
+
 
         DatabaseReference userID = FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        userID.child(wordStatusHandler.getCategory()).child(wordStatusHandler.getWord()).addValueEventListener(new ValueEventListener() {
+        DatabaseReference databaseReference = userID.child(wordStatusHandler.getCategory()).child(wordStatusHandler.getWord());
+
+
+
+        /*if(flagForUserList)
+            databaseReference = userID.child("userwordlist").child(wordStatusHandler.getCategory()).child(wordStatusHandler.getWord());*/
+
+
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 String key = "";
 
-                if (flag)
+                if (isItForMemorized)
                     key = "memorized";
                 else
                     key = "addedToList";
 
-                boolean w = Boolean.parseBoolean(snapshot.child(key).getValue().toString());
-                wordStatus.put(wordStatusHandler.getWord(), w);
+                boolean w;
+                if(snapshot.child(key).getValue() != null) {
+                    w = Boolean.parseBoolean(snapshot.child(key).getValue().toString());
+                    wordStatus.put(wordStatusHandler.getWord(), w);
 
-                if (w) {
-                    if (flag)
-                        button.setText(R.string.memorized);
-                    else
-                        button.setText(R.string.addedList);
 
-                    button.setBackgroundColor(Color.parseColor("#74E96F"));
-                } else {
-                    if (flag)
-                        button.setText(R.string.notMemorized);
-                    else
-                        button.setText(R.string.notOnTheList);
-                    button.setBackgroundColor(Color.BLUE);
+                    if (w) {
+                        if (isItForMemorized)
+                            button.setText(R.string.memorized);
+                        else
+                            button.setText(R.string.addedList);
+
+                        button.setBackgroundColor(Color.parseColor("#74E96F"));
+                    } else {
+                        if (isItForMemorized)
+                            button.setText(R.string.notMemorized);
+                        else
+                            button.setText(R.string.notOnTheList);
+                        button.setBackgroundColor(Color.BLUE);
+                    }
                 }
             }
 
@@ -405,11 +441,30 @@ public class Tools {
         });
     }
 
-    public static void addWordsToUserList(WordStatusHandler wordStatusHandler) {
+    public static void addToUserWordList(WordStatusHandler wordStatusHandler) {
         DatabaseReference userID = FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
+        userID.child("userwordlist").child(wordStatusHandler.getWord()).child("memorized").setValue(false).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull @NotNull Task<Void> task) {
+                if (task.isSuccessful());
 
+            }
+        });
 
+    }
+
+    public static void removeFromUserWordList(WordStatusHandler wordStatusHandler){
+        DatabaseReference userID = FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        userID.child("userwordlist").child(wordStatusHandler.getWord()).child("memorized").removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull @NotNull Task<Void> task) {
+                if (task.isSuccessful());
+
+            }
+        });
     }
 }

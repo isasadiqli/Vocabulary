@@ -2,6 +2,7 @@ package com.example.vocabularyapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.transition.TransitionManager;
@@ -9,10 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -29,18 +33,22 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     WordStatusHandler wordStatusHandlerSet;
 
     ArrayList<String> categories;
+    ArrayList<Integer> categoryIcon;
     String recycleViewType;
 
-    public Adapter(Context context, ArrayList<Word> words, HashMap<String, Boolean> wordStatus, ArrayList<String> categories, String recycleViewType) {
+
+    public Adapter(Context context, ArrayList<Word> words, HashMap<String, Boolean> wordStatus,
+                   ArrayList<String> categories, ArrayList<Integer> categoryIcon, String recycleViewType) {
         this.context = context;
         this.recycleViewType = recycleViewType;
 
         if (recycleViewType.equals("words")) {
             this.words = words;
             this.wordStatus = wordStatus;
-        }
-        else
+        } else {
             this.categories = categories;
+            this.categoryIcon = categoryIcon;
+        }
     }
 
     @NonNull
@@ -64,10 +72,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             holder.memorized.setBackgroundColor(Color.BLUE);
 
             final boolean isExpanded = position == mExpandedPosition;
-            holder.definitionLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+            //holder.definitionLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
             holder.exampleLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
             holder.memorized.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
-            holder.addToList.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+            if (!Tools.getCategory().toLowerCase().equals("userwordlist"))
+                holder.addToList.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+            else holder.addToList.setVisibility(View.GONE);
 
             holder.itemView.setActivated(isExpanded);
 
@@ -77,12 +87,15 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                 wordStatusHandlerSet = new WordStatusHandler(Tools.getCategory().toLowerCase(),
                         WordList.getWords().get(position).getWord());
 
-                Tools.getWordStatus(wordStatus, wordStatusHandlerSet, holder.memorized, true);
-                Tools.getWordStatus(wordStatus, wordStatusHandlerSet, holder.addToList, false);
+                if (Tools.getCategory().equals("userWordList"))
+                    Tools.getWordStatus(wordStatus, wordStatusHandlerSet, holder.memorized, true, true);
+                else {
+                    Tools.getWordStatus(wordStatus, wordStatusHandlerSet, holder.memorized, true, false);
+                    Tools.getWordStatus(wordStatus, wordStatusHandlerSet, holder.addToList, false, false);
+                }
 
                 Tools.setWordPosition(position);
             }
-
 
 
             holder.itemView.setOnClickListener(v -> {
@@ -107,6 +120,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                     wordStatus = new WordStatus();
                     wordStatus.setMemorized(true);
                     wordStatusHandler.setStatus(wordStatus);
+
+                    if(Tools.getCategory().toLowerCase().equals("userwordlist")) {
+                        Tools.removeFromUserWordList(wordStatusHandler);
+                        removeAt(position);
+                    }
 
                 } else {
 
@@ -137,6 +155,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                     wordStatus.setAddedToList(true);
                     wordStatusHandler.setStatus(wordStatus);
 
+                    Tools.addToUserWordList(wordStatusHandler);
+
                 } else {
 
                     wordStatusHandler = new WordStatusHandler(Tools.getCategory().toLowerCase(),
@@ -145,13 +165,18 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                     wordStatus = new WordStatus();
                     wordStatus.setAddedToList(false);
                     wordStatusHandler.setStatus(wordStatus);
+
+                    Tools.removeFromUserWordList(wordStatusHandler);
+
                 }
                 Tools.updateWordStatus(wordStatusHandler, false);
             });
-        }
-        else {
+        } else {
             String category = categories.get(position);
             holder.categoryTitle.setText(category);
+
+            Integer catIcon = categoryIcon.get(position);
+            holder.iconOfCategory.setImageResource(catIcon);
 
             holder.itemView.setOnClickListener(v -> {
                 Tools.setCategoryPosition(position);
@@ -161,6 +186,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
         }
 
+    }
+
+    public void removeAt(int position) {
+        words.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, words.size());
     }
 
     @Override
@@ -178,6 +209,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         LinearLayout definitionLayout, exampleLayout;
         Button memorized, addToList;
         RecyclerView recyclerView;
+        ImageView iconOfCategory;
 
         TextView categoryTitle;
 
@@ -190,7 +222,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             definition = itemView.findViewById(R.id.definition);
             example = itemView.findViewById(R.id.example);
 
-            definitionLayout = itemView.findViewById(R.id.definitionLayout);
+            //definitionLayout = itemView.findViewById(R.id.definitionLayout);
             exampleLayout = itemView.findViewById(R.id.exampleLayout);
             memorized = itemView.findViewById(R.id.Learned);
             addToList = itemView.findViewById(R.id.addToList);
@@ -198,6 +230,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             recyclerView = itemView.findViewById(R.id.wordList);
 
             categoryTitle = itemView.findViewById(R.id.categoryTitle);
+
+            iconOfCategory = itemView.findViewById(R.id.iconOfCategory);
         }
 
     }

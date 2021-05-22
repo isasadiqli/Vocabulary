@@ -1,98 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardElevation="8dp"
+    android:layout_margin="5dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="8dp"
-    android:layout_margin="16dp">
+    app:cardElevation="8dp">
 
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_margin="16dp"
         android:orientation="vertical">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/word"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:orientation="horizontal">
+            android:text="word"
+            android:textColor="@color/black"
+            android:textSize="26sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Word:          "
-                android:textColor="@color/black"
-                android:textSize="26sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/word"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="word"
-                android:textColor="@color/black"
-                android:textSize="26sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/definitionLayout"
+        <TextView
+            android:id="@+id/definition"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:orientation="horizontal">
+            android:text="definition "
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="italic" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Definition:  "
-                android:textColor="@color/black"
-                android:textSize="26sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/definition"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="definition "
-                android:textColor="@color/black"
-                android:textSize="26sp"
-                android:textStyle="bold" />
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/exampleLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Example:    "
+                android:text="\nEx:    "
                 android:textColor="@color/black"
-                android:textSize="26sp"
-                android:textStyle="bold" />
+                android:textSize="15sp"
+                android:textStyle="bold|italic" />
 
             <TextView
                 android:id="@+id/example"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="example                       "
+                android:layout_marginBottom="20dp"
+                android:text="example"
                 android:textColor="@color/black"
-                android:textSize="26sp"
-                android:textStyle="bold" />
+                android:textSize="18sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:weightSum="2.0" >
+            android:weightSum="2.0">
 
             <Button
                 android:id="@+id/Learned"

@@ -33,6 +33,7 @@ import java.util.Objects;
 public class HomeFragment extends Fragment {
 
     private ArrayList<String> categoryTitles = new ArrayList<>();
+    private ArrayList<Integer> categoryIcon = new ArrayList<>();
 
     private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
@@ -56,13 +57,21 @@ public class HomeFragment extends Fragment {
                 categoryTitles.add("Adverbs");
                 categoryTitles.add("Adjectives");
                 categoryTitles.add("Phrases and Idioms");
-                categoryTitles.add("User own list for words");
+                categoryTitles.add("Your list");
+
+                categoryIcon.add(R.drawable.verbs);
+                categoryIcon.add(R.drawable.adverbs);
+                categoryIcon.add(R.drawable.adjectives);
+                categoryIcon.add(R.drawable.idioms);
+                categoryIcon.add(R.drawable.yourwords);
 
                 recyclerView = getView().findViewById(R.id.categories);
                 recyclerView.setHasFixedSize(true);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                adapter = new Adapter(getContext(), words, wordStatus, categoryTitles, "categories");
+                adapter = new Adapter(getContext(), words, wordStatus, categoryTitles, categoryIcon, "categories");
                 recyclerView.setAdapter(adapter);
+
+
 
             }
         });
