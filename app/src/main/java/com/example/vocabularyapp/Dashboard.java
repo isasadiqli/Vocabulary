@@ -6,6 +6,9 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
@@ -23,6 +26,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.vocabularyapp.databinding.ActivityDashboardBinding;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
+
 public class Dashboard extends AppCompatActivity {
 
     private DrawerLayout drawer;
@@ -32,7 +37,6 @@ public class Dashboard extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
 
         binding = ActivityDashboardBinding.inflate(getLayoutInflater());
@@ -52,11 +56,9 @@ public class Dashboard extends AppCompatActivity {
                 .build();
 
 
-
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_dashboard);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-
 
 
     }
@@ -69,6 +71,29 @@ public class Dashboard extends AppCompatActivity {
         tools.setUserMail(findViewById(R.id.userMail));
         tools.readUserInfo("dashboard");
 
+        Spinner spinner = findViewById(R.id.spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.categoriesSpinner, android.R.layout.simple_spinner_item);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(0);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position!=0) {
+                    Intent intent = new Intent(Dashboard.this, Quiz.class);
+                    startActivity(intent);
+                    Quiz.setCategoryPosition(position);
+                    spinner.setSelection(0);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.dashboard, menu);
@@ -90,7 +115,7 @@ public class Dashboard extends AppCompatActivity {
             super.onBackPressed();
     }
 
-    public void logOutClicked(View view){
+    public void logOutClicked(View view) {
 
     }
 

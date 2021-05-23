@@ -4,12 +4,6 @@ public class WordStatusHandler {
     private String category, word;
     private WordStatus status;
 
-    public WordStatusHandler(String category, String word, WordStatus status) {
-        this.category = category;
-        this.word = word;
-        this.status = status;
-    }
-
     public WordStatusHandler(String category, String word) {
         this.category = category;
         this.word = word;
@@ -39,7 +33,4 @@ public class WordStatusHandler {
         this.status = status;
     }
 
-    public static void readUserWordStatus(){
-
-    }
 }

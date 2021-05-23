@@ -26,4 +26,13 @@
     <string name="addedList">Added list</string>
     <string name="notMemorized">Not memorized</string>
     <string name="notOnTheList">Not on the list</string>
+    <string name="quiz">Quiz   </string>
+
+    <string-array name="categoriesSpinner">
+        <item>Quiz"</item>
+        <item>Verbs"</item>
+        <item>Adverbs"</item>
+        <item>Adjectives"</item>
+        <item>Phrases and Idioms</item>
+    </string-array>
 </resources>

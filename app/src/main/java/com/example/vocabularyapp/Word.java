@@ -7,7 +7,19 @@ public class Word {
     private String word;
     private String definition;
     private String example;
+    private String category;
     //private HashMap<String, String> status = new HashMap<>();//key = userID, value = status
+
+    public Word(){
+
+    }
+
+    public Word(String word, String definition, String example, String category) {
+        this.word = word;
+        this.definition = definition;
+        this.example = example;
+        this.category = category;
+    }
 
     public String getWord() {
         return word;
@@ -21,14 +33,17 @@ public class Word {
         return example;
     }
 
-    /*public HashMap<String, String> getStatus() {
-        return status;
-    }*/
+    public String getCategory() {
+        return category;
+    }
 
     @Override
     public String toString() {
-        return "word: " + word + '\n' +
-                "definition: " + definition + '\n' +
-                "example: " + example;
+        return "Word{" +
+                "word='" + word + '\'' +
+                ", definition='" + definition + '\'' +
+                ", example='" + example + '\'' +
+                ", category='" + category + '\'' +
+                '}';
     }
 }

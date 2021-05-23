@@ -9,11 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.VocabularyApp">
+        <activity android:name=".Quiz"></activity>
         <activity
             android:name=".Dashboard"
             android:label="@string/title_activity_dashboard"
             android:theme="@style/Theme.VocabularyApp.NoActionBar" />
-
         <activity android:name=".WordList" />
         <activity android:name=".Login">
             <intent-filter>

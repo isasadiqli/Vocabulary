@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,7 +55,14 @@ public class Tools {
     private static ArrayList<Word> phrases = new ArrayList<>();
     private static int categoryPosition, wordPosition;
     private static User user;
-    private static ArrayList<Word> words;
+    private static ArrayList<Word> words = new ArrayList<>();
+
+    private static HashMap<String, WordStatus> verbStatus;
+    private static HashMap<String, WordStatus> adverbStatus;
+    private static HashMap<String, WordStatus> adjectiveStatus;
+    private static HashMap<String, WordStatus> phrasesStatus;
+    private static HashMap<String, WordStatus> userOwnListStatus;
+    private static HashMap<String, WordStatus> wordStatusHashMap;
 
     private TextView username, userMail;
 
@@ -235,18 +243,19 @@ public class Tools {
                 HashMap<String, WordStatus> adjectiveStatus = new HashMap<>();
                 HashMap<String, WordStatus> phrasesStatus = new HashMap<>();
                 HashMap<String, WordStatus> userOwnListStatus = new HashMap<>();
+                HashMap<String, WordStatus> wordStatusHashMap = new HashMap<>();
 
-                writeWordsToHashmap(snapshot, verbs, "Verbs", verbStatus);
-                writeWordsToHashmap(snapshot, adverbs, "Adverbs", adverbStatus);
-                writeWordsToHashmap(snapshot, adjectives, "Adjectives", adjectiveStatus);
-                writeWordsToHashmap(snapshot, phrases, "Phrases", phrasesStatus);
+                writeWordsToHashmap(snapshot, verbs, "Verbs", wordStatusHashMap);
+                writeWordsToHashmap(snapshot, adverbs, "Adverbs", wordStatusHashMap);
+                writeWordsToHashmap(snapshot, adjectives, "Adjectives", wordStatusHashMap);
+                writeWordsToHashmap(snapshot, phrases, "Phrases", wordStatusHashMap);
 
 
                 User user = new User(String.valueOf(name.getText()),
                         String.valueOf(surname.getText()),
                         String.valueOf(email.getText()),
                         String.valueOf(password.getText()),
-                        verbStatus, adverbStatus, adjectiveStatus, phrasesStatus, userOwnListStatus);
+                        wordStatusHashMap);
 
                 DatabaseReference userID = FirebaseDatabase.getInstance().getReference("Users")
                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -315,15 +324,11 @@ public class Tools {
                 HashMap<String, WordStatus> adverbStatus = new HashMap<>();
                 HashMap<String, WordStatus> adjectiveStatus = new HashMap<>();
                 HashMap<String, WordStatus> phrasesStatus = new HashMap<>();
-                HashMap<String, WordStatus> userOwnListStatus = new HashMap<>();
+                HashMap<String, WordStatus> wordStatusHashMap = new HashMap<>();
 
-                readWordsToHashmap(snapshot, verbStatus, userID, "verbs");
-                readWordsToHashmap(snapshot, adverbStatus, userID, "adverbs");
-                readWordsToHashmap(snapshot, adjectiveStatus, userID, "adjectives");
-                readWordsToHashmap(snapshot, phrasesStatus, userID, "phrases");
-                readWordsToHashmap(snapshot, userOwnListStatus, userID, "userOwnList");
+                readWordsToHashmap(snapshot, wordStatusHashMap, userID);
 
-                user = new User(name, surname, email, password, verbStatus, adverbStatus, adjectiveStatus, phrasesStatus, userOwnListStatus);
+                user = new User(name, surname, email, password, wordStatusHashMap);
 
                 if (location.equals("dashboard")) {
                     String userNameSurname = name + " " + surname;
@@ -339,13 +344,12 @@ public class Tools {
             }
         });
 
-
     }
 
     private void readWordsToHashmap(@NonNull @NotNull DataSnapshot snapshot, HashMap<String, WordStatus> wordStatus,
-                                    String userID, String category) {
+                                    String userID) {
         for (DataSnapshot ds :
-                snapshot.child(userID).child(category).getChildren()) {
+                snapshot.child(userID).child("wordStatus").getChildren()) {
             if (ds.child("memorized").getValue(Boolean.class) != null
                     && ds.child("addedToList").getValue(Boolean.class) != null) {
                 WordStatus ws = new WordStatus();
@@ -356,8 +360,8 @@ public class Tools {
         }
     }
 
-    //modify it later for addtolist
     public static void updateWordStatus(WordStatusHandler wordStatusHandler, boolean flag) {
+
         DatabaseReference userID = FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
@@ -367,13 +371,12 @@ public class Tools {
         if (flag) {
             key = "memorized";
             isMem = wordStatusHandler.getStatus().isMemorized();
-        }
-        else {
+        } else {
             key = "addedToList";
             isMem = wordStatusHandler.getStatus().isAddedToList();
         }
 
-        userID.child(wordStatusHandler.getCategory()).child(wordStatusHandler.getWord())
+        userID.child("wordStatus").child(wordStatusHandler.getWord())
                 .child(key)
                 .setValue(isMem).addOnCompleteListener(task -> {
 
@@ -384,27 +387,19 @@ public class Tools {
 
     }
 
-    public static void getWordStatus(HashMap<String, Boolean> wordStatus, WordStatusHandler wordStatusHandler, Button button, boolean isItForMemorized, boolean flagForUserList) {
-
-
+    public static void getWordStatus(HashMap<String, Boolean> wordStatus, WordStatusHandler wordStatusHandler,
+                                     Button button, boolean isItForMemorized, boolean flagForUserList) {
 
 
         DatabaseReference userID = FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        DatabaseReference databaseReference = userID.child(wordStatusHandler.getCategory()).child(wordStatusHandler.getWord());
-
-
-
-        /*if(flagForUserList)
-            databaseReference = userID.child("userwordlist").child(wordStatusHandler.getCategory()).child(wordStatusHandler.getWord());*/
-
-
+        DatabaseReference databaseReference = userID.child("wordStatus").child(wordStatusHandler.getWord());
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                String key = "";
+                String key;
 
                 if (isItForMemorized)
                     key = "memorized";
@@ -412,10 +407,9 @@ public class Tools {
                     key = "addedToList";
 
                 boolean w;
-                if(snapshot.child(key).getValue() != null) {
+                if (snapshot.child(key).getValue() != null) {
                     w = Boolean.parseBoolean(snapshot.child(key).getValue().toString());
                     wordStatus.put(wordStatusHandler.getWord(), w);
-
 
                     if (w) {
                         if (isItForMemorized)
@@ -441,30 +435,31 @@ public class Tools {
         });
     }
 
-    public static void addToUserWordList(WordStatusHandler wordStatusHandler) {
+    public static void addToUserWordList(WordStatusHandler wordStatusHandler, Word word) {
         DatabaseReference userID = FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        userID.child("userwordlist").child(wordStatusHandler.getWord()).child("memorized").setValue(false).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull @NotNull Task<Void> task) {
-                if (task.isSuccessful());
+        userID.child("userwordlist").child(word.getWord()).setValue(word).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) ;
+        });
 
-            }
+
+        userID.child("userwordlist").child(wordStatusHandler.getWord()).child("memorized")
+                .setValue(false).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) ;
+
         });
 
     }
 
-    public static void removeFromUserWordList(WordStatusHandler wordStatusHandler){
+    public static void removeFromUserWordList(WordStatusHandler wordStatusHandler) {
         DatabaseReference userID = FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        userID.child("userwordlist").child(wordStatusHandler.getWord()).child("memorized").removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull @NotNull Task<Void> task) {
-                if (task.isSuccessful());
+        userID.child("userwordlist").child(wordStatusHandler.getWord())
+                .removeValue().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) ;
 
-            }
         });
     }
 }

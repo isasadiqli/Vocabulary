@@ -19,8 +19,19 @@ import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
@@ -115,16 +126,33 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                 if (holder.memorized.getText().equals("Not memorized")) {
 
                     wordStatusHandler = new WordStatusHandler(Tools.getCategory().toLowerCase(),
-                            WordList.getWords().get(position).getWord());
+                            holder.word.getText().toString());
 
                     wordStatus = new WordStatus();
-                    wordStatus.setMemorized(true);
-                    wordStatusHandler.setStatus(wordStatus);
 
-                    if(Tools.getCategory().toLowerCase().equals("userwordlist")) {
-                        Tools.removeFromUserWordList(wordStatusHandler);
-                        removeAt(position);
+                    if (Tools.getCategory().toLowerCase().equals("userwordlist")) {
+
+                        DatabaseReference userID = FirebaseDatabase.getInstance().getReference("Users")
+                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                        userID.child("userwordlist").child(wordStatusHandler.getWord())
+                                .removeValue().addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                removeAt(position);
+
+                                wordStatus.setAddedToList(false);
+                                wordStatusHandler.setStatus(wordStatus);
+                                Tools.updateWordStatus(wordStatusHandler, false);
+                            }
+                        });
                     }
+                    else {
+                        wordStatus.setMemorized(true);
+                        wordStatusHandler.setStatus(wordStatus);
+                        Tools.updateWordStatus(wordStatusHandler, true);
+
+                    }
+
 
                 } else {
 
@@ -134,9 +162,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                     wordStatus = new WordStatus();
                     wordStatus.setMemorized(false);
                     wordStatusHandler.setStatus(wordStatus);
+                    Tools.updateWordStatus(wordStatusHandler, true);
                 }
-                Tools.updateWordStatus(wordStatusHandler, true);
-
 
             });
 
@@ -155,7 +182,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                     wordStatus.setAddedToList(true);
                     wordStatusHandler.setStatus(wordStatus);
 
-                    Tools.addToUserWordList(wordStatusHandler);
+                    Word wordToBeAddedToUserList = new Word(holder.word.getText().toString(),
+                            holder.definition.getText().toString(), holder.example.getText().toString(),
+                            Tools.getCategory().toLowerCase());
+
+                    Tools.addToUserWordList(wordStatusHandler, wordToBeAddedToUserList);
 
                 } else {
 
@@ -175,11 +206,14 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             String category = categories.get(position);
             holder.categoryTitle.setText(category);
 
+
             Integer catIcon = categoryIcon.get(position);
             holder.iconOfCategory.setImageResource(catIcon);
 
             holder.itemView.setOnClickListener(v -> {
+
                 Tools.setCategoryPosition(position);
+
                 Intent intent = new Intent(holder.context, WordList.class);
                 holder.context.startActivity(intent);
             });

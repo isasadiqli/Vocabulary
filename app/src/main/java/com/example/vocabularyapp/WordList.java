@@ -31,8 +31,14 @@ public class WordList extends AppCompatActivity {
     private RecyclerView recyclerView;
     private DatabaseReference databaseReference;
     private Adapter adapter;
-    private static ArrayList<Word> words;
+    private static ArrayList<Word> words = new ArrayList<>();
     private HashMap<String, Boolean> wordStatus = new HashMap<>();
+
+    private static ArrayList<Word> verbs = new ArrayList<>();
+    private static ArrayList<Word> adverbs = new ArrayList<>();
+    private static ArrayList<Word> adjectives = new ArrayList<>();
+    private static ArrayList<Word> phrases = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,35 +74,10 @@ public class WordList extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         if (Tools.getCategory().equals("userWordList")) {
-            ArrayList<String> userWords = new ArrayList<>();
-
             DatabaseReference userID = FirebaseDatabase.getInstance().getReference("Users")
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-            DatabaseReference mRef = userID.child("userwordlist");
-            mRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-
-                    for (DataSnapshot ds :
-                            snapshot.getChildren()) {
-                        userWords.add(ds.getKey());
-                    }
-
-                    searchWords(userWords, "Verbs");
-                    searchWords(userWords, "Adverbs");
-                    searchWords(userWords, "Adjectives");
-                    searchWords(userWords, "Phrases");
-
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull @NotNull DatabaseError error) {
-
-                }
-            });
-
+            userID.child("userwordlist").addValueEventListener(getListener());
 
         } else {
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Words").child(wordStatusHandler.getCategory());
@@ -112,7 +93,6 @@ public class WordList extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-
                 for (DataSnapshot snapshot :
                         dataSnapshot.getChildren()) {
                     Word word = snapshot.getValue(Word.class);
@@ -121,6 +101,7 @@ public class WordList extends AppCompatActivity {
                         words.add(word);
                 }
                 adapter.notifyDataSetChanged();
+
             }
 
             @Override
@@ -130,16 +111,6 @@ public class WordList extends AppCompatActivity {
         };
     }
 
-    private void searchWords(ArrayList<String> userWords, String category) {
-        for (String w :
-                userWords) {
-            Query query = FirebaseDatabase.getInstance().
-                    getReference("Words").child(category).orderByChild("word").equalTo(w);
-
-            query.addValueEventListener(getListener());
-        }
-    }
-
     public static ArrayList<Word> getWords() {
         return words;
     }
@@ -147,8 +118,9 @@ public class WordList extends AppCompatActivity {
     private static boolean search(String word) {
         for (Word w :
                 words) {
-            if (word.equals(w.getWord()))
-                return false;
+            if (word != null && w != null)
+                if (word.equals(w.getWord()))
+                    return false;
         }
         return true;
     }
