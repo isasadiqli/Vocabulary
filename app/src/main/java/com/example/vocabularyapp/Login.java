@@ -59,7 +59,7 @@ public class Login extends AppCompatActivity {
                             tools.readUserInfo("login");
 
                             Intent intent = new Intent(Login.this, Dashboard.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            finish();
                             startActivity(intent);
                         } else {
                             Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -121,7 +121,7 @@ public class Login extends AppCompatActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         if (firebaseAuth.getCurrentUser() != null) {
             Intent intent = new Intent(Login.this, Dashboard.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            finish();
             startActivity(intent);
 
         }

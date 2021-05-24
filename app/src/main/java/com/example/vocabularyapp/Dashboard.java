@@ -27,12 +27,17 @@ import com.example.vocabularyapp.databinding.ActivityDashboardBinding;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Dashboard extends AppCompatActivity {
 
     private DrawerLayout drawer;
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityDashboardBinding binding;
+
+
+    private static ArrayList<Integer> indexes;
+    private static int indexOfIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +68,21 @@ public class Dashboard extends AppCompatActivity {
 
     }
 
+    private static void generateRandomIndexes(int size) {
+        indexes = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            indexes.add(i);
+        }
+        Collections.shuffle(indexes);
+    }
+
+    public static int getIndex() {
+        System.out.println("menim 80" + indexOfIndex);
+        if (indexOfIndex < 10)
+            return indexes.get(indexOfIndex++);
+        return -1;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -81,7 +101,9 @@ public class Dashboard extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(position!=0) {
+                if (position != 0) {
+                    generateRandomIndexes(10);
+
                     Intent intent = new Intent(Dashboard.this, Quiz.class);
                     startActivity(intent);
                     Quiz.setCategoryPosition(position);
@@ -124,4 +146,6 @@ public class Dashboard extends AppCompatActivity {
         Intent intent = new Intent(this, Login.class);
         startActivity(intent);
     }
+
+
 }

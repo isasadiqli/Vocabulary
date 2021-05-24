@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -49,31 +50,36 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
+        homeViewModel.getText().observe(getViewLifecycleOwner(), s -> {
 
-                categoryTitles.add("Verbs");
-                categoryTitles.add("Adverbs");
-                categoryTitles.add("Adjectives");
-                categoryTitles.add("Phrases and Idioms");
-                categoryTitles.add("Your list");
+            categoryTitles.add("Verbs");
+            categoryTitles.add("Adverbs");
+            categoryTitles.add("Adjectives");
+            categoryTitles.add("Phrases and Idioms");
+            categoryTitles.add("Your list");
 
-                categoryIcon.add(R.drawable.verbs);
-                categoryIcon.add(R.drawable.adverbs);
-                categoryIcon.add(R.drawable.adjectives);
-                categoryIcon.add(R.drawable.idioms);
-                categoryIcon.add(R.drawable.yourwords);
+            categoryIcon.add(R.drawable.verbs);
+            categoryIcon.add(R.drawable.adverbs);
+            categoryIcon.add(R.drawable.adjectives);
+            categoryIcon.add(R.drawable.idioms);
+            categoryIcon.add(R.drawable.yourwords);
 
-                recyclerView = getView().findViewById(R.id.categories);
-                recyclerView.setHasFixedSize(true);
-                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                adapter = new Adapter(getContext(), words, wordStatus, categoryTitles, categoryIcon, "categories");
-                recyclerView.setAdapter(adapter);
+            recyclerView = getView().findViewById(R.id.categories);
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            adapter = new Adapter(getContext(), words, wordStatus, categoryTitles, categoryIcon, "categories");
+            recyclerView.setAdapter(adapter);
+
+            OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+                @Override
+                public void handleOnBackPressed() {
+                    // Handle the back button event
+                    getActivity().finish();
+                }
+            };
+            requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
 
-
-            }
         });
 
 
@@ -85,4 +91,6 @@ public class HomeFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
+
 }

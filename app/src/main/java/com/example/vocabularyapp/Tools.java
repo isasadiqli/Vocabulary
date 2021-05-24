@@ -57,17 +57,7 @@ public class Tools {
     private static User user;
     private static ArrayList<Word> words = new ArrayList<>();
 
-    private static HashMap<String, WordStatus> verbStatus;
-    private static HashMap<String, WordStatus> adverbStatus;
-    private static HashMap<String, WordStatus> adjectiveStatus;
-    private static HashMap<String, WordStatus> phrasesStatus;
-    private static HashMap<String, WordStatus> userOwnListStatus;
-    private static HashMap<String, WordStatus> wordStatusHashMap;
-
     private TextView username, userMail;
-
-    private static WordStatusHandler wordStatusHandler;
-
 
     public void setUsername(TextView username) {
         this.username = username;
@@ -238,11 +228,6 @@ public class Tools {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
 
-                HashMap<String, WordStatus> verbStatus = new HashMap<>();
-                HashMap<String, WordStatus> adverbStatus = new HashMap<>();
-                HashMap<String, WordStatus> adjectiveStatus = new HashMap<>();
-                HashMap<String, WordStatus> phrasesStatus = new HashMap<>();
-                HashMap<String, WordStatus> userOwnListStatus = new HashMap<>();
                 HashMap<String, WordStatus> wordStatusHashMap = new HashMap<>();
 
                 writeWordsToHashmap(snapshot, verbs, "Verbs", wordStatusHashMap);
@@ -320,10 +305,6 @@ public class Tools {
                 String email = snapshot.child(userID).child("email").getValue(String.class);
                 String password = snapshot.child(userID).child("password").getValue(String.class);
 
-                HashMap<String, WordStatus> verbStatus = new HashMap<>();
-                HashMap<String, WordStatus> adverbStatus = new HashMap<>();
-                HashMap<String, WordStatus> adjectiveStatus = new HashMap<>();
-                HashMap<String, WordStatus> phrasesStatus = new HashMap<>();
                 HashMap<String, WordStatus> wordStatusHashMap = new HashMap<>();
 
                 readWordsToHashmap(snapshot, wordStatusHashMap, userID);
