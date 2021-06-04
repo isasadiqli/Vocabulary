@@ -27,6 +27,7 @@
     <string name="notMemorized">Not memorized</string>
     <string name="notOnTheList">Not on the list</string>
     <string name="quiz">Quiz   </string>
+    <string name="hard_words_your_list">Hard words (Your list)</string>
 
     <string-array name="categoriesSpinner">
         <item>Quiz"</item>
@@ -35,4 +36,15 @@
         <item>Adjectives"</item>
         <item>Phrases and Idioms</item>
     </string-array>
+
+    <string-array name="typesOfTime">
+        <item>each 15 minutes</item>
+        <item>each 30 minutes</item>
+        <item>each 60 minutes</item>
+        <item>twice a day</item>
+        <item>every day"</item>
+    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="remind_later">remind later</string>
 </resources>

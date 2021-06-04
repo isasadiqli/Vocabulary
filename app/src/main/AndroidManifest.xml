@@ -9,7 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.VocabularyApp">
-        <activity android:name=".Quiz"></activity>
+        <activity
+            android:name=".ReminderPopup"
+            android:theme="@style/Theme.VocabularyApp.NoActionBar"/>
+        <activity android:name=".Quiz" />
         <activity
             android:name=".Dashboard"
             android:label="@string/title_activity_dashboard"
@@ -22,6 +25,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver android:name=".Alarm" />
     </application>
 
 </manifest>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".QuizFragment">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:visibility="visible"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/question"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="\nFind right definition of the word: \n"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/word_quiz"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="\nTextView\n"
+            android:textAlignment="center"
+            android:textColor="@color/design_default_color_primary_dark"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp">
+
+            <RadioButton
+                android:id="@+id/radioButton0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="radioButtonClicked"
+                android:text="RadioButton0" />
+
+            <RadioButton
+                android:id="@+id/radioButton1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="radioButtonClicked"
+                android:text="RadioButton1" />
+
+            <RadioButton
+                android:id="@+id/radioButton2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="radioButtonClicked"
+                android:text="RadioButton2" />
+
+            <RadioButton
+                android:id="@+id/radioButton3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="radioButtonClicked"
+                android:text="RadioButton3" />
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/continue_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="continueClicked"
+            android:text="Continue" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/finished_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:visibility="gone"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/finished_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CONTRATULATIONS, YOU HAVE COMPLETED VERBS"
+            android:textSize="30sp"
+            android:textStyle="bold|italic"
+            android:textColor="@color/black" />
+
+        <Button
+            android:id="@+id/finished_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Go back" />
+
+    </LinearLayout>
+
+</FrameLayout>

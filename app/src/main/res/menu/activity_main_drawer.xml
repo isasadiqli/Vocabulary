@@ -14,16 +14,15 @@
             android:icon="@drawable/ic_baseline_search_24"
             android:title="@string/search_word" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/Logout" />
+            android:id="@+id/nav_hard_words"
+            android:icon="@drawable/ic_baseline_alarm_24"
+            android:title="@string/hard_words_your_list" />
 
     </group>
 
     <item
         android:id="@+id/navigation_drawer_item3"
         android:icon="@drawable/ic_baseline_quiz_24"
-        android:title="@string/quiz"
         app:actionLayout="@layout/spinner"
         />
 

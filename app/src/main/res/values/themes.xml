@@ -23,4 +23,5 @@
     <style name="Theme.VocabularyApp.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.VocabularyApp.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
 </resources>

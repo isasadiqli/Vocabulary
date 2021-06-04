@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.vocabularyapp.ui.hard_words.HardWordsFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -81,6 +82,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             holder.definition.setText(word.getDefinition());
             holder.example.setText(word.getExample());
             holder.memorized.setBackgroundColor(Color.BLUE);
+            holder.addToList.setBackgroundColor(Color.BLUE);
 
             final boolean isExpanded = position == mExpandedPosition;
             //holder.definitionLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
@@ -95,12 +97,15 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             if (isExpanded) {
                 previousExpandedPosition = position;
 
-                wordStatusHandlerSet = new WordStatusHandler(Tools.getCategory().toLowerCase(),
-                        WordList.getWords().get(position).getWord());
+                if (Tools.getCategory().equals("userWordList")) {
+                    wordStatusHandlerSet = new WordStatusHandler(Tools.getCategory().toLowerCase(),
+                            HardWordsFragment.getWords().get(position).getWord());
 
-                if (Tools.getCategory().equals("userWordList"))
                     Tools.getWordStatus(wordStatus, wordStatusHandlerSet, holder.memorized, true, true);
-                else {
+                } else {
+                    wordStatusHandlerSet = new WordStatusHandler(Tools.getCategory().toLowerCase(),
+                            WordList.getWords().get(position).getWord());
+
                     Tools.getWordStatus(wordStatus, wordStatusHandlerSet, holder.memorized, true, false);
                     Tools.getWordStatus(wordStatus, wordStatusHandlerSet, holder.addToList, false, false);
                 }
@@ -145,8 +150,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                                 Tools.updateWordStatus(wordStatusHandler, false);
                             }
                         });
-                    }
-                    else {
+                    } else {
                         wordStatus.setMemorized(true);
                         wordStatusHandler.setStatus(wordStatus);
                         Tools.updateWordStatus(wordStatusHandler, true);

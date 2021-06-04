@@ -52,7 +52,6 @@ public class WordList extends AppCompatActivity {
         TypedValue typedValue = new TypedValue();
         this.getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
         final int color = typedValue.data;
-
         actionBar.setBackgroundDrawable(new ColorDrawable(color));
 
         recyclerView = findViewById(R.id.wordList);
@@ -73,18 +72,9 @@ public class WordList extends AppCompatActivity {
 
         recyclerView.setAdapter(adapter);
 
-        if (Tools.getCategory().equals("userWordList")) {
-            DatabaseReference userID = FirebaseDatabase.getInstance().getReference("Users")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-            userID.child("userwordlist").addValueEventListener(getListener());
-
-        } else {
-            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Words").child(wordStatusHandler.getCategory());
-            System.out.println("menim 102 " + wordStatusHandler.getCategory());
-            databaseReference.addValueEventListener(getListener());
-        }
-
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Words").child(wordStatusHandler.getCategory());
+        System.out.println("menim 102 " + wordStatusHandler.getCategory());
+        databaseReference.addValueEventListener(getListener());
     }
 
     @NotNull

@@ -10,11 +10,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -25,15 +27,24 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.vocabularyapp.databinding.ActivityDashboardBinding;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 public class Dashboard extends AppCompatActivity {
 
     private DrawerLayout drawer;
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityDashboardBinding binding;
+    public static ArrayList<Word> words = new ArrayList<>();
 
 
     private static ArrayList<Integer> indexes;
@@ -56,8 +67,8 @@ public class Dashboard extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_search, R.id.nav_slideshow, R.id.nav_profile)
-                .setDrawerLayout(drawer)
+                R.id.nav_home, R.id.nav_search, R.id.nav_hard_words, R.id.nav_profile)
+                .setOpenableLayout(drawer)
                 .build();
 
 
@@ -70,16 +81,18 @@ public class Dashboard extends AppCompatActivity {
 
     private static void generateRandomIndexes(int size) {
         indexes = new ArrayList<>();
+
         for (int i = 0; i < size; i++) {
             indexes.add(i);
         }
+
         Collections.shuffle(indexes);
     }
 
     public static int getIndex() {
-        System.out.println("menim 80" + indexOfIndex);
         if (indexOfIndex < 10)
             return indexes.get(indexOfIndex++);
+        indexOfIndex = 0;
         return -1;
     }
 
@@ -90,6 +103,9 @@ public class Dashboard extends AppCompatActivity {
         tools.setUsername(findViewById(R.id.username));
         tools.setUserMail(findViewById(R.id.userMail));
         tools.readUserInfo("dashboard");
+
+        HashMap<String, WordCategories> wordCategoriesHashMap = new HashMap<>();
+        readWords(wordCategoriesHashMap);
 
         Spinner spinner = findViewById(R.id.spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -102,11 +118,25 @@ public class Dashboard extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position != 0) {
+
                     generateRandomIndexes(10);
+
+                    Tools.setCategoryPosition(position - 1);
+                    if(Tools.getCategory().equals("Verbs")){
+                        words = wordCategoriesHashMap.get("Verbs").getWords();
+                    }
+                    else if(Tools.getCategory().equals("Adjectives")){
+                        words = wordCategoriesHashMap.get("Adjectives").getWords();
+                    }
+                    else if(Tools.getCategory().equals("Phrases")){
+                        words = wordCategoriesHashMap.get("Phrases").getWords();
+                    }
+                    else if(Tools.getCategory().equals("Adverbs")){
+                        words = wordCategoriesHashMap.get("Adverbs").getWords();
+                    }
 
                     Intent intent = new Intent(Dashboard.this, Quiz.class);
                     startActivity(intent);
-                    Quiz.setCategoryPosition(position);
                     spinner.setSelection(0);
                 }
             }
@@ -122,6 +152,31 @@ public class Dashboard extends AppCompatActivity {
         return true;
     }
 
+    private void readWords(HashMap<String, WordCategories> wordCategories) {
+        DatabaseReference dRef = FirebaseDatabase.getInstance().getReference("Words");
+        dRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                for (DataSnapshot ds :
+                        snapshot.getChildren()) {
+                    ArrayList<Word> word = new ArrayList<>();
+                    for (DataSnapshot dsv :
+                            ds.getChildren()) {
+                        word.add(dsv.getValue(Word.class));
+                    }
+                    WordCategories wordCat = new WordCategories(ds.getKey(), word);
+                    wordCategories.put(ds.getKey(), wordCat);
+                }
+                Toast.makeText(Dashboard.this, "words read", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        });
+    }
+
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_dashboard);
@@ -135,10 +190,6 @@ public class Dashboard extends AppCompatActivity {
             drawer.closeDrawer(GravityCompat.START);
         } else
             super.onBackPressed();
-    }
-
-    public void logOutClicked(View view) {
-
     }
 
     public void logOutClicked(MenuItem item) {
