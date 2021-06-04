@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -49,6 +50,9 @@ public class QuizFragment extends Fragment {
     private RadioGroup radioGroup;
     private boolean correct = false;
 
+
+    private View view;
+
     public static boolean finished = false;
 
     // TODO: Rename and change types of parameters
@@ -83,7 +87,7 @@ public class QuizFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_quiz, container, false);
+        view = inflater.inflate(R.layout.fragment_quiz, container, false);
         setHasOptionsMenu(true);
         words = new ArrayList<>();
         wordTV = view.findViewById(R.id.word_quiz);
@@ -111,7 +115,7 @@ public class QuizFragment extends Fragment {
         generateQuizLevels(size, index);
         progressBar.setMax(size);
 
-        if(score == size)
+        if (score == size)
             score = 0;
         progressBar.setProgress(score);
 
@@ -131,25 +135,37 @@ public class QuizFragment extends Fragment {
         if (radioID == radioButtonIds[indexForRB.get(0)]) {
             correct = true;
             radioButtons[indexForRB.get(0)].setBackgroundColor(Color.GREEN);
+
+            for (int i = 0; i < radioGroup.getChildCount(); i++) {
+                if (i != indexForRB.get(0))
+                    (radioGroup.getChildAt(i)).setEnabled(false);
+            }
         } else {
-            //radioButtons[radioID].setBackgroundColor(Color.RED);
+            view.findViewById(radioID).setEnabled(false);
         }
     }
 
     public void continueClicked(View v) {
         if (correct && index != -1) {
             score++;
-            /*Intent intent = new Intent(getContext(), QuizFragment.class);
-            //getActivity().finish();
-            startActivity(intent);*/
 
-            if(score == words.size()-1){
-                getActivity().finish();
-                score = 0;
-            }
-            else {
+            if (score == words.size()) {
+                Dashboard.initializeIndex();
+                progressBar.setProgress(score);
+
+                TextView textView = view.findViewById(R.id.finished_textview);
+                textView.setText(Tools.getCongratsCategory());
+
+                view.findViewById(R.id.finished_layout).setVisibility(View.VISIBLE);
+                view.findViewById(R.id.quiz_layout).setVisibility(View.GONE);
+                view.findViewById(R.id.finished_button).setOnClickListener(v1 -> {
+                    getActivity().finish();
+                    score = 0;
+                });
+
+            } else {
                 QuizFragment fragment2 = new QuizFragment();
-                FragmentManager fragmentManager = getFragmentManager();
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_right_to_left);
                 fragmentTransaction.replace(R.id.fragmentContainerView, fragment2);
@@ -215,6 +231,9 @@ public class QuizFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             getActivity().finish();
+            Dashboard.initializeIndex();
+            getActivity().finish();
+            score = 0;
             return true;
         }
         return super.onOptionsItemSelected(item);

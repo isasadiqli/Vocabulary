@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">VocabularyApp</string>
+    <string name="app_name">Vocabulary</string>
     <string name="need_an_account"><u>Need an account?</u></string>
     <string name="login">Login</string>
     <string name="password">Password</string>
@@ -53,4 +53,5 @@
     <string name="definition">definition</string>
     <string name="example">example</string>
     <string name="add">Add</string>
+
 </resources>

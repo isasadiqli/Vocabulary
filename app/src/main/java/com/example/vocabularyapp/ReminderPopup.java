@@ -33,7 +33,6 @@ public class ReminderPopup extends AppCompatActivity {
         definition.setText(Tools.readFromFile(this, "definition.txt"));
         example.setText(Tools.readFromFile(this, "example.txt"));
 
-
     }
 
 
@@ -45,6 +44,7 @@ public class ReminderPopup extends AppCompatActivity {
         wordStatus.setAddedToList(false);
         wordStatusHandler.setStatus(wordStatus);
 
+        Tools.updateWordStatus(wordStatusHandler, false);
         Tools.removeFromUserWordList(wordStatusHandler);
 
         NotificationManager notificationManager = (NotificationManager) getApplicationContext()
@@ -52,14 +52,6 @@ public class ReminderPopup extends AppCompatActivity {
 
         notificationManager.cancelAll();
 
-        //isShown = false;
-
-        /*Intent intent = new Intent(this, Alarm.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-
-        AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(),
-                HardWordsFragment.interval, pendingIntent);*/
 
         finish();
     }

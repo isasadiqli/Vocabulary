@@ -6,6 +6,7 @@
     tools:context=".QuizFragment">
 
     <LinearLayout
+        android:id="@+id/quiz_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
@@ -80,6 +81,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
+        android:layout_gravity="center"
         android:visibility="gone"
         android:orientation="vertical">
 
@@ -87,8 +89,8 @@
             android:id="@+id/finished_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CONTRATULATIONS, YOU HAVE COMPLETED VERBS"
             android:textSize="30sp"
+            android:text="CONGRATULATIONS, YOU HAVE COMPLETED VERBS"
             android:textStyle="bold|italic"
             android:textColor="@color/black" />
 

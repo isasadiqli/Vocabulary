@@ -46,7 +46,6 @@ public class Dashboard extends AppCompatActivity {
     private ActivityDashboardBinding binding;
     public static ArrayList<Word> words = new ArrayList<>();
 
-
     private static ArrayList<Integer> indexes;
     private static int indexOfIndex = 0;
 
@@ -87,6 +86,10 @@ public class Dashboard extends AppCompatActivity {
         }
 
         Collections.shuffle(indexes);
+    }
+
+    public static void initializeIndex(){
+        indexOfIndex = 0;
     }
 
     public static int getIndex() {

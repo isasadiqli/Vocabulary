@@ -37,6 +37,8 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static androidx.core.content.res.TypedArrayUtils.getString;
+
 public class Tools {
 
     private static String password = "", passwordReentered = " ";
@@ -102,6 +104,20 @@ public class Tools {
                 return "Phrases and Idioms";
             case 4:
                 return "Your list";
+        }
+        return "";
+    }
+
+    public static String getCongratsCategory() {
+        switch (categoryPosition) {
+            case 0:
+                return "CONGRATULATIONS, YOU HAVE COMPLETED VERBS";
+            case 1:
+                return "CONGRATULATIONS, YOU HAVE COMPLETED ADVERBS";
+            case 2:
+                return "CONGRATULATIONS, YOU HAVE COMPLETED ADJECTIVES";
+            case 3:
+                return "CONGRATULATIONS, YOU HAVE COMPLETED PHRASES AND IDIOMS";
         }
         return "";
     }
