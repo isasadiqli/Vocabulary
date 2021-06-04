@@ -13,7 +13,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.vocabularyapp.databinding.FragmentProfileBinding;
-import com.example.vocabularyapp.databinding.FragmentSearchBinding;
 
 public class ProfileFragment extends Fragment {
 

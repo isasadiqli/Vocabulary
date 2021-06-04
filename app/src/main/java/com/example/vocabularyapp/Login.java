@@ -39,11 +39,11 @@ public class Login extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
 
 
-        Tools.editTextListener(loginButton, name, "name");
-        Tools.editTextListener(loginButton, surname, "surname");
-        Tools.editTextListener(loginButton, email, "email");
-        Tools.editTextListener(loginButton, password, "password");
-        Tools.editTextListener(loginButton, passwordReentered, "passwordReentered");
+        Tools.editTextListener(loginButton, name, "name", true);
+        Tools.editTextListener(loginButton, surname, "surname", true);
+        Tools.editTextListener(loginButton, email, "email", true);
+        Tools.editTextListener(loginButton, password, "password", true);
+        Tools.editTextListener(loginButton, passwordReentered, "passwordReentered", true);
 
     }
 

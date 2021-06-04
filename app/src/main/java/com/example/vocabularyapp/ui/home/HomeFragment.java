@@ -56,13 +56,11 @@ public class HomeFragment extends Fragment {
             categoryTitles.add("Adverbs");
             categoryTitles.add("Adjectives");
             categoryTitles.add("Phrases and Idioms");
-            categoryTitles.add("Your list");
 
             categoryIcon.add(R.drawable.verbs);
             categoryIcon.add(R.drawable.adverbs);
             categoryIcon.add(R.drawable.adjectives);
             categoryIcon.add(R.drawable.idioms);
-            categoryIcon.add(R.drawable.yourwords);
 
             recyclerView = getView().findViewById(R.id.categories);
             recyclerView.setHasFixedSize(true);

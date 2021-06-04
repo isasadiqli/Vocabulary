@@ -46,6 +46,9 @@ public class Tools {
     private static boolean emailEmpty = true;
     private static boolean passwordEmpty = true;
     private static boolean passwordReenteredEmpty = true;
+
+    private static boolean wordEmpty = true, definitionEmpty = true, exampleEmpty = true;
+
     private static boolean statusOfMemorizeButton = false;
     private static boolean statusOfAddToListButton = false;
 
@@ -182,7 +185,7 @@ public class Tools {
         }
     }
 
-    public static void editTextListener(Button button, EditText editText, String error) {
+    public static void editTextListener(Button button, EditText editText, String error, boolean isForLogin) {
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -193,24 +196,49 @@ public class Tools {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                 //editText.setError("Enter " + error);
-                if (error.equals("name")) {
-                    nameEmpty = s.toString().trim().length() == 0;
-                } else if (error.equals("surname")) {
-                    surnameEmpty = s.toString().trim().length() == 0;
-                } else if (error.equals("email")) {
-                    emailEmpty = s.toString().trim().length() == 0;
-                } else if (error.equals("password")) {
-                    passwordEmpty = s.toString().trim().length() == 0;
-                    setPassword(String.valueOf(editText.getText()));
-                } else if (error.equals("passwordReentered")) {
-                    passwordReenteredEmpty = s.toString().trim().length() == 0;
-                    setPasswordReentered(String.valueOf(editText.getText()));
+                if(isForLogin) {
+                    switch (error) {
+                        case "name":
+                            nameEmpty = s.toString().trim().length() == 0;
+                            break;
+                        case "surname":
+                            surnameEmpty = s.toString().trim().length() == 0;
+                            break;
+                        case "email":
+                            emailEmpty = s.toString().trim().length() == 0;
+                            break;
+                        case "password":
+                            passwordEmpty = s.toString().trim().length() == 0;
+                            setPassword(String.valueOf(editText.getText()));
+                            break;
+                        case "passwordReentered":
+                            passwordReenteredEmpty = s.toString().trim().length() == 0;
+                            setPasswordReentered(String.valueOf(editText.getText()));
+                            break;
+                    }
+
+                    if (!signedUp) {
+                        button.setEnabled(!(nameEmpty || surnameEmpty || emailEmpty || passwordEmpty || passwordReenteredEmpty)
+                                && arePasswordsMatch() && password.trim().length() >= 6);
+                    } else button.setEnabled(!(emailEmpty || passwordEmpty));
+                }
+                else {
+                    switch (error){
+                        case "word":
+                            wordEmpty = s.toString().trim().length() == 0;
+                            break;
+                        case "definition":
+                            definitionEmpty = s.toString().trim().length() == 0;
+                            break;
+                        case "example":
+                            exampleEmpty = s.toString().trim().length() == 0;
+                            break;
+                    }
+
+                    button.setEnabled(!(wordEmpty || definitionEmpty || exampleEmpty));
                 }
 
-                if (!signedUp) {
-                    button.setEnabled(!(nameEmpty || surnameEmpty || emailEmpty || passwordEmpty || passwordReenteredEmpty)
-                            && arePasswordsMatch() && password.trim().length() >= 6);
-                } else button.setEnabled(!(emailEmpty || passwordEmpty));
+
 
             }
 

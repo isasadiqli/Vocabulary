@@ -1,6 +1,7 @@
 package com.example.vocabularyapp.ui.hard_words;
 
 import android.app.AlarmManager;
+import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -11,10 +12,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -31,6 +35,8 @@ import com.example.vocabularyapp.Quiz;
 import com.example.vocabularyapp.R;
 import com.example.vocabularyapp.Tools;
 import com.example.vocabularyapp.Word;
+import com.example.vocabularyapp.WordList;
+import com.example.vocabularyapp.WordStatus;
 import com.example.vocabularyapp.WordStatusHandler;
 import com.example.vocabularyapp.databinding.FragmentHardWordsBinding;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,6 +51,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class HardWordsFragment extends Fragment {
 
@@ -108,7 +115,7 @@ public class HardWordsFragment extends Fragment {
             });
 
             createNotificationChannel();
-            getView().findViewById(R.id.button2).setOnClickListener(v -> {
+            getView().findViewById(R.id.confirm).setOnClickListener(v -> {
 
                 Toast.makeText(getContext(), "reminderrrrr", Toast.LENGTH_SHORT).show();
 
@@ -139,6 +146,8 @@ public class HardWordsFragment extends Fragment {
                         interval, pendingIntent);
 
             });
+
+            getView().findViewById(R.id.addNewWord).setOnClickListener(this::addNewWordClicked);
 
 
             OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
@@ -216,6 +225,44 @@ public class HardWordsFragment extends Fragment {
                     return false;
         }
         return true;
+    }
+
+    public void addNewWordClicked(View v) {
+        Dialog dialog = new Dialog(getContext(), R.style.Dialog);
+        dialog.setContentView(R.layout.add_word_dialog);
+        dialog.setTitle("Add new word");
+
+        EditText wordTV = dialog.findViewById(R.id.add_word);
+        EditText definitionTV = dialog.findViewById(R.id.add_definition);
+        EditText exampleTV = dialog.findViewById(R.id.add_example);
+
+        Button add = dialog.findViewById(R.id.addComplete);
+        add.setEnabled(false);
+
+        Tools.editTextListener(add, wordTV, "word", false);
+        Tools.editTextListener(add, definitionTV, "definition", false);
+        Tools.editTextListener(add, exampleTV, "example", false);
+
+        add.setOnClickListener(v1 -> {
+            String word = wordTV.getText().toString();
+            String definition = definitionTV.getText().toString();
+            String example = exampleTV.getText().toString();
+
+            Word wordToBeAddedToUserList = new Word(word, definition, example,"userAdded");
+
+            WordStatusHandler wordStatusHandler = new WordStatusHandler("userAdded",
+                    wordToBeAddedToUserList.getWord());
+
+            WordStatus wordStatus = new WordStatus();
+            wordStatus.setAddedToList(true);
+            wordStatusHandler.setStatus(wordStatus);
+
+            Tools.addToUserWordList(wordStatusHandler, wordToBeAddedToUserList);
+
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 
     @Override

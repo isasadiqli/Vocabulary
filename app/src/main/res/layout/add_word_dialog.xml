@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="5dp"
+    android:layout_gravity="center">
+
+    <EditText
+        android:id="@+id/add_word"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/word"
+        android:textColor="@color/black"/>
+
+    <EditText
+        android:id="@+id/add_definition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/definition"
+        android:textColor="@color/black"/>
+
+    <EditText
+        android:id="@+id/add_example"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/example"
+        android:textColor="@color/black"/>
+
+    <Button
+        android:id="@+id/addComplete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add"/>
+
+</LinearLayout>
